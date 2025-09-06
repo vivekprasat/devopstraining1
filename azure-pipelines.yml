@@ -8,22 +8,13 @@ trigger:
 
 pool:
   vmImage: ubuntu-latest
-- task: TerraformTask@5
-  inputs:
-    provider: 'azurerm'
-    command: 'init'
-- task: TerraformTask@5
-  inputs:
-    provider: 'azurerm'
-    command: 'plan'
-task: ManualValidation@0
-  inputs:
-    notifyUsers: 'vsrajan2k@gmail.com'   # optional
-    instructions: 'Please review the Terraform plan output and approve to continue.'
-    onTimeout: 'reject'
-    timeout: '43200' # 12 hours
-    - task: TerraformTask@5
-      inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        environmentServiceNameAzureRM: 'azuredevops'
+
+steps:
+  - task: TerraformTask@5
+    inputs:
+      provider: 'azurerm'
+      command: 'init' 
+  - task: TerraformTask@5
+    inputs:
+      provider: 'azurerm'
+      command: 'plan'
