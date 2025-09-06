@@ -1,0 +1,10 @@
+group_name     = "vivek007"
+location       = "eastus"
+nic_name       = "vivenc-01"
+Machine_name   = "new"
+vnet_name      = "vnet01"
+address_prefix = ["10.0.1.0/24"]
+public_ip      = "my_public_ip"
+nsg_name       = "trss"
+sub_name       = "vivek-01"
+vm_name        = "myVM"
