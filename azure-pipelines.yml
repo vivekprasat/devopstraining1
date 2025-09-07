@@ -1,8 +1,4 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
+# Starter pipeline - Terraform with self-hosted agent
 resources:
   repositories:
     - repository: self
@@ -22,12 +18,27 @@ jobs:
     runOnce:
       deploy:
         steps:
-          - task: TerraformTask@5
+          # Install Terraform
+          - task: TerraformInstaller@1
             inputs:
-              provider: 'azurerm'
-              command: 'init'
+              terraformVersion: 'latest'
 
-          - task: TerraformTask@5
-            inputs:
-              provider: 'azurerm'
-              command: 'plan'
+          # Terraform Init
+          - script: |
+              terraform init \
+                -backend-config="resource_group_name=my-tfstate-rg" \
+                -backend-config="storage_account_name=mytfstateaccount" \
+                -backend-config="container_name=tfstate" \
+                -backend-config="key=terraform.tfstate"
+            displayName: 'Terraform Init'
+
+          # Terraform Plan
+          - script: |
+              terraform plan -out=tfplan
+            displayName: 'Terraform Plan'
+
+          # (Optional) Terraform Apply
+          # Uncomment this if you want to apply automatically
+          # - script: |
+          #     terraform apply -auto-approve tfplan
+          #   displayName: 'Terraform Apply'
