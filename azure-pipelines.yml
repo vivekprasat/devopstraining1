@@ -1,4 +1,4 @@
-# Starter pipeline - Terraform with self-hosted agent
+# Starter pipeline - Terraform with self-hosted agent (Windows/Linux compatible)
 resources:
   repositories:
     - repository: self
@@ -23,8 +23,13 @@ jobs:
             inputs:
               terraformVersion: 'latest'
 
+          # Check Terraform Version
+          - bash: |
+              terraform -version
+            displayName: 'Check Terraform Version'
+
           # Terraform Init
-          - script: |
+          - bash: |
               terraform init \
                 -backend-config="resource_group_name=my-tfstate-rg" \
                 -backend-config="storage_account_name=mytfstateaccount" \
@@ -33,12 +38,12 @@ jobs:
             displayName: 'Terraform Init'
 
           # Terraform Plan
-          - script: |
+          - bash: |
               terraform plan -out=tfplan
             displayName: 'Terraform Plan'
 
           # (Optional) Terraform Apply
-          # Uncomment this if you want to apply automatically
-          # - script: |
+          # Uncomment this if you want to auto-deploy
+          # - bash: |
           #     terraform apply -auto-approve tfplan
           #   displayName: 'Terraform Apply'
