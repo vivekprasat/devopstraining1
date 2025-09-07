@@ -33,6 +33,7 @@ jobs:
               provider: 'azurerm'
               command: 'init'
               workingDirectory: '$(System.DefaultWorkingDirectory)/modules'
+              backendAzureRmUseEntraIdForAuthentication: false
               backendServiceArm: 'azuredevops'
               backendAzureRmResourceGroupName: 'vivek007'
               backendAzureRmStorageAccountName: 'tfstorage000009'
