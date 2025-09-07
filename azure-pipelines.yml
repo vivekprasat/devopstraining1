@@ -28,13 +28,14 @@ jobs:
               script: 'terraform -version'
               errorActionPreference: 'silentlyContinue'
               verbosePreference: 'silentlyContinue'
-          - task: PowerShell@2
+          - task: AzureCLI@2
             inputs:
-              targetType: 'inline'
-              script: 'az'
-              errorActionPreference: 'silentlyContinue'
-              verbosePreference: 'silentlyContinue'
-
+              azureSubscription: 'azuredevops'
+              scriptType: 'ps'
+              scriptLocation: 'inlineScript'
+              inlineScript: 'az'
+              useGlobalConfig: true
+              visibleAzLogin: false
           # # Check Terraform Version
           # - bash: |
           #     terraform -version
