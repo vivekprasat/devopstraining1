@@ -33,7 +33,7 @@ jobs:
               azureSubscription: 'azuredevops'
               scriptType: 'ps'
               scriptLocation: 'inlineScript'
-              inlineScript: 'az storage account keys list -g vivek007 -n tfstorage000009 --query [0].value -o tsv'
+              inlineScript: '$a="(az storage account keys list -g vivek007 -n tfstorage000009 --query [0].value -o tsv)"; ##vso[task.setvariable variable=MY_VARIABLE]$a'
               useGlobalConfig: true
           # # Check Terraform Version
           # - bash: |
