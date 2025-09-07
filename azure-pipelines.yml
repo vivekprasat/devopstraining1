@@ -1,49 +1,45 @@
-# Starter pipeline - Terraform with self-hosted agent (Windows/Linux compatible)
-resources:
-  repositories:
-    - repository: self
-      type: github
-      name: vivekprasat/devopstraining1
-      ref: refs/heads/main
+trigger:
+- main
 
-jobs:
-- deployment: Self_hosted_agent
-  pool:
-    name: Default   # self-hosted agent pool
-    demands:
-      - agent.name -equals DESKTOP-FESMJVB
-  continueOnError: false
-  environment: dev
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-          # Install Terraform
-          - task: TerraformInstaller@1
-            inputs:
-              terraformVersion: 'latest'
+pool:
+  vmImage: 'ubuntu-latest'
 
-          # Check Terraform Version
-          - bash: |
-              terraform -version
-            displayName: 'Check Terraform Version'
+steps:
+# 1. Install Terraform
+- task: TerraformInstaller@1
+  inputs:
+    terraformVersion: 'latest'
 
-          # Terraform Init
-          - bash: |
-              terraform init \
-                -backend-config="resource_group_name=my-tfstate-rg" \
-                -backend-config="storage_account_name=mytfstateaccount" \
-                -backend-config="container_name=tfstate" \
-                -backend-config="key=terraform.tfstate"
-            displayName: 'Terraform Init'
+# 2. Show Terraform version
+- script: terraform -version
+  displayName: 'Check Terraform Version'
+  shell: bash
 
-          # Terraform Plan
-          - bash: |
-              terraform plan -out=tfplan
-            displayName: 'Terraform Plan'
+# 3. Terraform Init
+- script: |
+    terraform init \
+      -backend-config="resource_group_name=my-tfstate-rg" \
+      -backend-config="storage_account_name=mytfstate" \
+      -backend-config="container_name=tfstate" \
+      -backend-config="key=terraform.tfstate"
+  displayName: 'Terraform Init'
+  shell: bash
 
-          # (Optional) Terraform Apply
-          # Uncomment this if you want to auto-deploy
-          # - bash: |
-          #     terraform apply -auto-approve tfplan
-          #   displayName: 'Terraform Apply'
+# 4. Terraform Plan
+- script: |
+    terraform plan -out=tfplan
+  displayName: 'Terraform Plan'
+  shell: bash
+
+# 5. Manual Approval (before Apply)
+- task: ManualValidation@0
+  inputs:
+    instructions: 'Please review the Terraform plan before applying changes.'
+    onTimeout: 'reject'
+  displayName: 'Approval before Apply'
+
+# 6. Terraform Apply
+- script: |
+    terraform apply -auto-approve tfplan
+  displayName: 'Terraform Apply'
+  shell: bash
