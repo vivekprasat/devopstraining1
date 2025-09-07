@@ -35,6 +35,10 @@ jobs:
               scriptLocation: 'inlineScript'
               inlineScript: '$a="(az storage account keys list -g vivek007 -n tfstorage000009 --query [0].value -o tsv)"; ##vso[task.setvariable variable=MY_VARIABLE]$a'
               useGlobalConfig: true
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: 'cat'
           - task: AzureCLI@2
             inputs:
               azureSubscription: 'azuredevops'
