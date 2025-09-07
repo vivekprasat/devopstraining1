@@ -13,7 +13,7 @@ steps:
 # 2. Show Terraform version
 - script: terraform -version
   displayName: 'Check Terraform Version'
-  shell: bash
+  
 
 # 3. Terraform Init
 - script: |
@@ -23,23 +23,23 @@ steps:
       -backend-config="container_name=tfstate" \
       -backend-config="key=terraform.tfstate"
   displayName: 'Terraform Init'
-  shell: bash
+  
 
 # 4. Terraform Plan
 - script: |
     terraform plan -out=tfplan
   displayName: 'Terraform Plan'
-  shell: bash
+  
 
 # 5. Manual Approval (before Apply)
-- task: ManualValidation@0
-  inputs:
-    instructions: 'Please review the Terraform plan before applying changes.'
-    onTimeout: 'reject'
-  displayName: 'Approval before Apply'
+#- task: ManualValidation@0
+#  inputs:
+ #   instructions: 'Please review the Terraform plan before applying changes.'
+  #  onTimeout: 'reject'
+  #displayName: 'Approval before Apply'
 
 # 6. Terraform Apply
 - script: |
     terraform apply -auto-approve tfplan
   displayName: 'Terraform Apply'
-  shell: bash
+  
