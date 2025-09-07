@@ -42,9 +42,9 @@ jobs:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 terraform init \
-                  -backend-config="resource_group_name=my-tfstate-rg" \
-                  -backend-config="storage_account_name=mytfstateaccount" \
-                  -backend-config="container_name=tfstate" \
+                  -backend-config="resource_group_name=vivek007" \
+                  -backend-config="storage_account_name=tfstorage000009" \
+                  -backend-config="container_name=tfprivatecontainer" \
                   -backend-config="key=terraform.tfstate" \
                   -backend-config="access_key=$(MY_VARIABLE)"
           # # Check Terraform Version
