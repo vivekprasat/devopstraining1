@@ -13,7 +13,9 @@ resources:
 jobs:
 - deployment: Self_hosted_agent
   pool:
-    name: default   # self-hosted agent pool
+    name: Default   # self-hosted agent pool
+    demands:
+      - agent.name -equals DESKTOP-FESMJVB
   continueOnError: false
   environment: dev
   strategy:
