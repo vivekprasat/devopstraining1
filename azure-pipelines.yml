@@ -28,29 +28,38 @@ jobs:
               script: 'terraform -version'
               errorActionPreference: 'silentlyContinue'
               verbosePreference: 'silentlyContinue'
-          - task: AzureCLI@2
+          - task: TerraformTask@5
             inputs:
-              azureSubscription: 'azuredevops'
-              scriptType: 'ps'
-              scriptLocation: 'inlineScript'
-              inlineScript: '$a="(az storage account keys list -g vivek007 -n tfstorage000009 --query [0].value -o tsv)"; ##vso[task.setvariable variable=MY_VARIABLE]$a'
-              useGlobalConfig: true
-          - task: Bash@3
-            inputs:
-              targetType: 'inline'
-              script: 'cat'
-          - task: AzureCLI@2
-            inputs:
-              azureSubscription: 'azuredevops'
-              scriptType: 'ps'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                terraform init \
-                  -backend-config='resource_group_name=vivek007' \
-                  -backend-config='storage_account_name=tfstorage000009' \
-                  -backend-config='container_name=tfprivatecontainer' \
-                  -backend-config='key=terraform.tfstate' \
-                  -backend-config='access_key=$(MY_VARIABLE)'
+              provider: 'azurerm'
+              command: 'init'
+              backendServiceArm: 'azuredevops'
+              backendAzureRmResourceGroupName: 'vivek007'
+              backendAzureRmStorageAccountName: 'tfstorage000009'
+              backendAzureRmContainerName: 'tfprivatecontainer'
+              backendAzureRmKey: 'terraform.tfstate'
+          # - task: AzureCLI@2
+          #   inputs:
+          #     azureSubscription: 'azuredevops'
+          #     scriptType: 'ps'
+          #     scriptLocation: 'inlineScript'
+          #     inlineScript: '$a="(az storage account keys list -g vivek007 -n tfstorage000009 --query [0].value -o tsv)"; ##vso[task.setvariable variable=MY_VARIABLE]$a'
+          #     useGlobalConfig: true
+          # - task: Bash@3
+          #   inputs:
+          #     targetType: 'inline'
+          #     script: 'cat'
+          # - task: AzureCLI@2
+          #   inputs:
+          #     azureSubscription: 'azuredevops'
+          #     scriptType: 'ps'
+          #     scriptLocation: 'inlineScript'
+          #     inlineScript: |
+          #       terraform init \
+          #         -backend-config='resource_group_name=vivek007' \
+          #         -backend-config='storage_account_name=tfstorage000009' \
+          #         -backend-config='container_name=tfprivatecontainer' \
+          #         -backend-config='key=terraform.tfstate' \
+          #         -backend-config='access_key=$(MY_VARIABLE)'
           # # Check Terraform Version
           # - bash: |
           #     terraform -version
