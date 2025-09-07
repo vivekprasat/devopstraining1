@@ -35,6 +35,18 @@ jobs:
               scriptLocation: 'inlineScript'
               inlineScript: '$a="(az storage account keys list -g vivek007 -n tfstorage000009 --query [0].value -o tsv)"; ##vso[task.setvariable variable=MY_VARIABLE]$a'
               useGlobalConfig: true
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'azuredevops'
+              scriptType: 'ps'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                terraform init \
+                  -backend-config="resource_group_name=my-tfstate-rg" \
+                  -backend-config="storage_account_name=mytfstateaccount" \
+                  -backend-config="container_name=tfstate" \
+                  -backend-config="key=terraform.tfstate" \
+                  -backend-config="access_key=$(MY_VARIABLE)"
           # # Check Terraform Version
           # - bash: |
           #     terraform -version
@@ -46,7 +58,9 @@ jobs:
               #   -backend-config="resource_group_name=my-tfstate-rg" \
               #   -backend-config="storage_account_name=mytfstateaccount" \
               #   -backend-config="container_name=tfstate" \
-              #   -backend-config="key=terraform.tfstate"
+              #   -backend-config="key=terraform.tfstate" \
+              #   -backend-config="access_key=$(MY_VARIABLE)"
+              
           #   displayName: 'Terraform Init'
 
           # # Terraform Plan
