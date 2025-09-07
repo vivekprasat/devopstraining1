@@ -19,9 +19,9 @@ jobs:
       deploy:
         steps:
           # Install Terraform
-          - task: TerraformInstaller@1
-            inputs:
-              terraformVersion: 'latest'
+          # - task: TerraformInstaller@1
+          #   inputs:
+          #     terraformVersion: 'latest'
 
           # Check Terraform Version
           - bash: |
