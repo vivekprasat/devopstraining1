@@ -32,6 +32,7 @@ jobs:
             inputs:
               provider: 'azurerm'
               command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/modules'
               backendServiceArm: 'azuredevops'
               backendAzureRmResourceGroupName: 'vivek007'
               backendAzureRmStorageAccountName: 'tfstorage000009'
@@ -41,6 +42,7 @@ jobs:
             inputs:
               provider: 'azurerm'
               command: 'plan'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/modules'
               environmentServiceNameAzureRM: 'azuredevops'
           # - task: AzureCLI@2
           #   inputs:
