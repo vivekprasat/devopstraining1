@@ -1,4 +1,3 @@
-
 # Starter pipeline
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
@@ -14,7 +13,7 @@ resources:
 jobs:
 - deployment: Self_hosted_agent
   pool:
-    vmImage: ubuntu-latest
+    name: default   # self-hosted agent pool
   continueOnError: false
   environment: dev
   strategy:
