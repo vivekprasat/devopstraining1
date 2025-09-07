@@ -35,7 +35,6 @@ jobs:
               scriptLocation: 'inlineScript'
               inlineScript: 'az'
               useGlobalConfig: true
-              visibleAzLogin: false
           # # Check Terraform Version
           # - bash: |
           #     terraform -version
