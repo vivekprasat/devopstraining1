@@ -28,6 +28,12 @@ jobs:
               script: 'terraform -version'
               errorActionPreference: 'silentlyContinue'
               verbosePreference: 'silentlyContinue'
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: 'az'
+              errorActionPreference: 'silentlyContinue'
+              verbosePreference: 'silentlyContinue'
 
           # # Check Terraform Version
           # - bash: |
