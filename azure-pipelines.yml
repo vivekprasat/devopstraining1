@@ -37,6 +37,11 @@ jobs:
               backendAzureRmStorageAccountName: 'tfstorage000009'
               backendAzureRmContainerName: 'tfprivatecontainer'
               backendAzureRmKey: 'terraform.tfstate'
+          - task: TerraformTask@5
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              environmentServiceNameAzureRM: 'azuredevops'
           # - task: AzureCLI@2
           #   inputs:
           #     azureSubscription: 'azuredevops'
