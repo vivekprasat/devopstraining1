@@ -14,7 +14,7 @@ module "azurerm_virtual_network" {
 }
 
 module "azurerm_subnet" {
-  source                  = "modules/subnets"
+  source                  = "./modules/subnets"
   subnet_address_prefixes = var.address_prefix
   resource_group_name     = module.azurerm_resource_group.name
   name                    = var.sub_name
@@ -23,7 +23,7 @@ module "azurerm_subnet" {
 }
 
 module "azurerm_network_security_group" {
-  source              = "modules/NSG"
+  source              = "./modules/NSG"
   name                = var.nsg_name
   resource_group_name = module.azurerm_resource_group.name
   location            = module.azurerm_resource_group.location
@@ -31,7 +31,7 @@ module "azurerm_network_security_group" {
 }
 
 module "azurerm_public_ip" {
-  source              = "modules/PublicIPaddress"
+  source              = "./modules/PublicIPaddress"
   resource_group_name = module.azurerm_resource_group.name
   location            = module.azurerm_resource_group.location
   name                = "net124"
@@ -39,7 +39,7 @@ module "azurerm_public_ip" {
 }
 
 module "azurerm_network_interface" {
-  source              = "modules/virtualMachines1/NIC"
+  source              = "./modules/virtualMachines1/NIC"
   nic_name            = var.nic_name
   resource_group_name = module.azurerm_resource_group.name
   subnet_id           = module.azurerm_subnet.subnet_id
@@ -50,7 +50,7 @@ module "azurerm_network_interface" {
 }
 
 module "virtualmachines" {
-  source              = "modules/virtualMachines1"
+  source              = "./modules/virtualMachines1"
   vm_name             = var.vm_name
   location            = module.azurerm_resource_group.location
   resource_group_name = module.azurerm_resource_group.name
