@@ -1,24 +1,62 @@
-resource "azurerm_resource_group" "new" {
-  name     = var.resource_group_name
-  location = var.resource_group_location
+module "azurerm_resource_group" {
+  source                  = "./resourcegroups"
+  resource_group_name     = var.group_name
+  resource_group_location = var.location
 }
-resource "azurerm_storage_account" "tfstate112" {
-  name                            = var.storage_account
-  resource_group_name             = azurerm_resource_group.new.name
-  location                        = azurerm_resource_group.new.location
-  account_tier                    = "Standard"
-  account_replication_type        = "LRS"
-  allow_nested_items_to_be_public = false
-
-  tags = {
-    environment = "staging"
-  }
+module "azurerm_virtual_network" {
+  source         = "./virtual _networks"
+  resourcegroup  = module.azurerm_resource_group.group_name
+  location       = module.azurerm_resource_group.location
+  vnet_name      = var.vnet_name
+  address_prefix = var.address_prefix
+  depends_on     = [module.azurerm_resource_group]
 }
-
-resource "azurerm_storage_container" "tfstate" {
-  name                  = var.container_name
-  storage_account_id    = azurerm_storage_account.tfstate112.id
-  container_access_type = "private"
+module "azurerm_subnet" {
+  source                  = "./subnets"
+  subnet_address_prefixes = var.address_prefix
+  resource_group_name     = module.azurerm_resource_group.group_name
+  name                    = var.sub_name
+  vnet_name               = module.azurerm_virtual_network.vnet_name
+  depends_on              = [module.azurerm_virtual_network, module.azurerm_resource_group]
+}
+module "azurerm_public_ip" {
+  source              = "./PublicIPaddress"
+  resource_group_name = module.azurerm_resource_group.group_name
+  location            = module.azurerm_resource_group.location
+  azurerm_public_ip   = var.address_prefix
+  name                = "net124"
+  depends_on          = [module.azurerm_resource_group]
+}
+module "azurerm_network_interface" {
+  source              = "./virtualMachines1/NIC"
+  nic_name            = var.nic_name
+  resource_group_name = module.azurerm_resource_group.group_name
+  subnet_id           = module.azurerm_subnet.subnet_id
+  location            = module.azurerm_resource_group.location
+  public_ip_id        = module.azurerm_public_ip.id
+  nsg_id              = module.azurerm_network_security_group.nsg_id
+  depends_on          = [module.azurerm_subnet]
 
 }
-
+module "virtualmachines" {
+  source              = "./virtualMachines1"
+  vm_name             = var.vm_name
+  location            = module.azurerm_resource_group.location
+  resource_group_name = module.azurerm_resource_group.group_name
+  subnet_id           = module.azurerm_subnet.subnet_id
+  public_ip_id        = module.azurerm_public_ip.id
+  admin_username      = "azureuser"
+  admin_password      = "Revisu!123"
+  nic_name            = module.azurerm_network_interface.nic_name
+  depends_on          = [module.azurerm_network_interface]
+  nic_id              = module.azurerm_network_interface.nic_id
+  nsg_id              = module.azurerm_network_security_group.nsg_id
+}
+module "azurerm_network_security_group" {
+  source              = "./NSG"
+  name                = var.nsg_name
+  resource_group_name = module.azurerm_resource_group.group_name
+  location            = module.azurerm_resource_group.location
+  nic_name            = var.nic_name
+  depends_on          = [module.azurerm_resource_group]
+}
