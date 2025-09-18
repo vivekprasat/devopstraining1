@@ -60,3 +60,13 @@ module "azurerm_network_security_group" {
   nic_name            = var.nic_name
   depends_on          = [module.azurerm_resource_group]
 }
+
+terraform {
+  backend "azurerm" {
+    resource_group_name   = "vivek007"
+    storage_account_name  = "tfstorage000009"
+    container_name        = "tfprivatecontainer"
+    key                   = "terraform.tfstate"
+  }
+}
+
