@@ -1,10 +1,10 @@
 module "azurerm_resource_group" {
-  source                  = "./resourcegroups"
+  source                  = "modules/resourcegroups"
   resource_group_name     = var.group_name
   resource_group_location = var.location
 }
 module "azurerm_virtual_network" {
-  source         = "./virtual _networks"
+  source         = "modules/virtual _networks"
   resourcegroup  = module.azurerm_resource_group.group_name
   location       = module.azurerm_resource_group.location
   vnet_name      = var.vnet_name
@@ -12,7 +12,7 @@ module "azurerm_virtual_network" {
   depends_on     = [module.azurerm_resource_group]
 }
 module "azurerm_subnet" {
-  source                  = "./subnets"
+  source                  = "modules/subnets"
   subnet_address_prefixes = var.address_prefix
   resource_group_name     = module.azurerm_resource_group.group_name
   name                    = var.sub_name
@@ -20,7 +20,7 @@ module "azurerm_subnet" {
   depends_on              = [module.azurerm_virtual_network, module.azurerm_resource_group]
 }
 module "azurerm_public_ip" {
-  source              = "./PublicIPaddress"
+  source              = "modules/PublicIPaddress"
   resource_group_name = module.azurerm_resource_group.group_name
   location            = module.azurerm_resource_group.location
   azurerm_public_ip   = var.address_prefix
@@ -28,7 +28,7 @@ module "azurerm_public_ip" {
   depends_on          = [module.azurerm_resource_group]
 }
 module "azurerm_network_interface" {
-  source              = "./virtualMachines1/NIC"
+  source              = "modules/virtualMachines1/NIC"
   nic_name            = var.nic_name
   resource_group_name = module.azurerm_resource_group.group_name
   subnet_id           = module.azurerm_subnet.subnet_id
@@ -39,7 +39,7 @@ module "azurerm_network_interface" {
 
 }
 module "virtualmachines" {
-  source              = "./virtualMachines1"
+  source              = "modules/virtualMachines1"
   vm_name             = var.vm_name
   location            = module.azurerm_resource_group.location
   resource_group_name = module.azurerm_resource_group.group_name
@@ -53,7 +53,7 @@ module "virtualmachines" {
   nsg_id              = module.azurerm_network_security_group.nsg_id
 }
 module "azurerm_network_security_group" {
-  source              = "./NSG"
+  source              = "modules/NSG"
   name                = var.nsg_name
   resource_group_name = module.azurerm_resource_group.group_name
   location            = module.azurerm_resource_group.location
