@@ -1,5 +1,5 @@
 module "azurerm_resource_group" {
-  source                  = "modules/resourcegroups"
+  source                  = "./modules/resourcegroups"
   resource_group_name     = var.group_name
   resource_group_location = var.location
 }
