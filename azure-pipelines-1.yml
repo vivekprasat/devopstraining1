@@ -9,7 +9,6 @@ resources:
       ref: refs/heads/main
 
 pool:
-  vmImage: ubuntu-latest
   name: Default
   demands:
     - agent.name -equals vivek
@@ -34,6 +33,13 @@ stages:
     - script: terraform init
       displayName: "Terraform Initialising"
 
+    - script: terraform plan
+      displayName: "Terraform Planning"
+
+    # ✅ Manual approval before apply
+    
+    - script: terraform apply --auto-approve
+      displayName: "Terraform Apply"
 
 - stage: PlanAndApply
   displayName: "Terraform Plan and Apply"
@@ -42,8 +48,12 @@ stages:
   - job: TerraformJob
     displayName: "Run Terraform Plan & Apply"
     steps:
+    - script: terraform init
+      displayName: "Terraform Initialising"
+
     - script: terraform plan
       displayName: "Run Terraform Plan"
+
 
     - script: terraform apply --auto-approve
       displayName: "Run Terraform Apply"
