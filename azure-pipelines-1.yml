@@ -1,24 +1,17 @@
 trigger:
 - main
 
-resources:
-  repositories:
-    - repository: self
-      type: github
-      name: vivekprasat/devopstraining1
-      ref: refs/heads/main
-
 pool:
   name: Default
   demands:
     - agent.name -equals vivek
 
 stages:
-- stage: InitAndPlan
-  displayName: "Terraform Init"
+- stage: Terraform
+  displayName: "Terraform Plan and Apply"
   jobs:
   - job: TerraformJob
-    displayName: "Run Terraform Init"
+    displayName: "Run Terraform"
     steps:
     - script: sudo apt-get update && sudo apt-get install -y unzip
       displayName: "Install unzip"
@@ -36,24 +29,27 @@ stages:
     - script: terraform plan
       displayName: "Terraform Planning"
 
-    # ✅ Manual approval before apply
-    
+- stage: Approval
+  displayName: "Manual Approval"
+  dependsOn: Terraform
+  jobs:
+  - job: WaitForApproval
+    displayName: "Wait for Manual Approval"
+    pool: server
+    steps:
+    - task: ManualValidation@0
+      inputs:
+        notifyUsers: 'vsrajan2k@gmail.com'
+        instructions: 'Please validate the Terraform plan and approve to proceed.'
+        onTimeout: 'reject'
+        timeoutInMinutes: 1440
+
+- stage: Apply
+  displayName: "Terraform Apply"
+  dependsOn: Approval
+  jobs:
+  - job: ApplyTerraform
+    displayName: "Apply Terraform Changes"
+    steps:
     - script: terraform apply --auto-approve
       displayName: "Terraform Apply"
-
-- stage: PlanAndApply
-  displayName: "Terraform Plan and Apply"
-  dependsOn: InitAndPlan
-  jobs:
-  - job: TerraformJob
-    displayName: "Run Terraform Plan & Apply"
-    steps:
-    - script: terraform init
-      displayName: "Terraform Initialising"
-
-    - script: terraform plan
-      displayName: "Run Terraform Plan"
-
-
-    - script: terraform apply --auto-approve
-      displayName: "Run Terraform Apply"
