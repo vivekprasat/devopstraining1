@@ -26,8 +26,10 @@ stages:
     - script: terraform init
       displayName: "Terraform Initialising"
 
-    - script: terraform plan
-      displayName: "Terraform Planning"
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
 
 - stage: Approval
   displayName: "Manual Approval"
