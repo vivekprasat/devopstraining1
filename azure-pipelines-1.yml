@@ -1,0 +1,68 @@
+trigger:
+- main
+
+pool:
+  name: Default
+  demands:
+    - agent.name -equals vivek
+
+stages:
+- stage: Terraform
+  displayName: "Terraform Plan and Apply"
+  jobs:
+  - job: TerraformJob
+    displayName: "Run Terraform"
+    steps:
+    - script: sudo apt-get update && sudo apt-get install -y unzip
+      displayName: "Install unzip"
+
+    - task: TerraformInstaller@1
+      inputs:
+        terraformVersion: 'latest'
+
+    - script: terraform -version
+      displayName: "Check Terraform Version"
+
+    - script: terraform init
+      displayName: "Terraform Initialising"
+
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        environmentServiceNameAzureRM: "azuredevops"
+
+- stage: Approval
+  displayName: "Manual Approval"
+  dependsOn: Terraform
+  jobs:
+  - job: WaitForApproval
+    displayName: "Wait for Manual Approval"
+    pool: server
+    steps:
+    - task: ManualValidation@0
+      inputs:
+        notifyUsers: 'vsrajan2k@gmail.com'
+        instructions: 'Please validate the Terraform plan and approve to proceed.'
+        onTimeout: 'reject'
+        timeoutInMinutes: 1440
+
+- stage: Apply
+  displayName: "Terraform Apply"
+  dependsOn: Approval
+  jobs:
+  - job: ApplyTerraform
+    displayName: "Apply Terraform Changes"
+    steps:
+    - task: TerraformInstaller@1
+      inputs:
+        terraformVersion: 'latest'
+
+    - script: terraform init
+      displayName: "Terraform Initialising"
+
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        environmentServiceNameAzureRM: 'azuredevops'

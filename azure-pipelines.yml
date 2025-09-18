@@ -1,0 +1,101 @@
+# Starter pipeline - Terraform with self-hosted agent (Windows/Linux compatible)
+resources:
+  repositories:
+    - repository: self
+      type: github
+      name: vivekprasat/devopstraining1
+      ref: refs/heads/main
+
+jobs:
+- deployment: Self_hosted_agent
+  pool:
+    name: Default   # self-hosted agent pool
+    demands:
+      - agent.name -equals DESKTOP-FESMJVB
+  continueOnError: false
+  environment: dev
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+          # Install Terraform
+          # - task: TerraformInstaller@1
+          #   inputs:
+          #     terraformVersion: 'latest'
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: 'terraform -version'
+              errorActionPreference: 'silentlyContinue'
+              verbosePreference: 'silentlyContinue'
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: 'terraform refresh'
+              errorActionPreference: 'silentlyContinue'
+              verbosePreference: 'silentlyContinue'
+          - task: TerraformTask@5
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/modules'
+              backendServiceArm: 'azuredevops'
+              backendAzureRmResourceGroupName: 'vivek007'
+              backendAzureRmStorageAccountName: 'tfstorage000009'
+              backendAzureRmContainerName: 'tfprivatecontainer'
+              backendAzureRmKey: 'lll.tfstate'
+          - task: TerraformTask@5
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/modules'
+              environmentServiceNameAzureRM: 'azuredevops'
+          # - task: AzureCLI@2
+          #   inputs:
+          #     azureSubscription: 'azuredevops'
+          #     scriptType: 'ps'
+          #     scriptLocation: 'inlineScript'
+          #     inlineScript: '$a="(az storage account keys list -g vivek007 -n tfstorage000009 --query [0].value -o tsv)"; ##vso[task.setvariable variable=MY_VARIABLE]$a'
+          #     useGlobalConfig: true
+          # - task: Bash@3
+          #   inputs:
+          #     targetType: 'inline'
+          #     script: 'cat'
+          # - task: AzureCLI@2
+          #   inputs:
+          #     azureSubscription: 'azuredevops'
+          #     scriptType: 'ps'
+          #     scriptLocation: 'inlineScript'
+          #     inlineScript: |
+          #       terraform init \
+          #         -backend-config='resource_group_name=vivek007' \
+          #         -backend-config='storage_account_name=tfstorage000009' \
+          #         -backend-config='container_name=tfprivatecontainer' \
+          #         -backend-config='key=terraform.tfstate' \
+          #         -backend-config='access_key=$(MY_VARIABLE)'
+          # # Check Terraform Version
+          # - bash: |
+          #     terraform -version
+          #   displayName: 'Check Terraform Version'
+
+          # Terraform Init
+          # - bash: |
+              # terraform init \
+              #   -backend-config="resource_group_name=my-tfstate-rg" \
+              #   -backend-config="storage_account_name=mytfstateaccount" \
+              #   -backend-config="container_name=tfstate" \
+              #   -backend-config="key=terraform.tfstate" \
+              #   -backend-config="access_key=$(MY_VARIABLE)"
+              
+          #   displayName: 'Terraform Init'
+
+          # # Terraform Plan
+          # - bash: |
+          #     terraform plan -out=tfplan
+          #   displayName: 'Terraform Plan'
+
+          # (Optional) Terraform Apply
+          # Uncomment this if you want to auto-deploy
+          # - bash: |
+          #     terraform apply -auto-approve tfplan
+          #   displayName: 'Terraform Apply'
