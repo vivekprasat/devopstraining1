@@ -30,6 +30,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'plan'
+        environmentServiceNameAzureRM:''
 
 - stage: Approval
   displayName: "Manual Approval"
