@@ -30,7 +30,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'plan'
-        environmentServiceNameAzureRM:''
+        environmentServiceNameAzureRM: "azuredevops"
 
 - stage: Approval
   displayName: "Manual Approval"
