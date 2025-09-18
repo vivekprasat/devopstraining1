@@ -1,4 +1,4 @@
-group_name     = "vivek007"
+group_name     = "vivek008"
 location       = "eastus"
 nic_name       = "vivenc-01"
 Machine_name   = "new"
