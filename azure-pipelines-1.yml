@@ -7,6 +7,19 @@ pool:
     - agent.name -equals vivek
 
 stages:
+- stage: InstallAzureCLI
+  displayName: "Install Azure CLI"
+  jobs:
+  - job: InstallCLI
+    displayName: "Install Azure CLI on Ubuntu"
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: |
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+        az version
+      displayName: "Install Azure CLI and verify"
+
 - stage: Terraform
   displayName: "Terraform Plan and Apply"
   jobs:
