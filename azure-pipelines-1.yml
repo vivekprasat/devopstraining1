@@ -31,6 +31,8 @@ stages:
         backendAzureRmResourceGroupName: 'vivek007'
         backendAzureRmStorageAccountName: 'tfstorage000009'
         backendAzureRmContainerName: 'tfprivatecontainer'
+        environmentServiceNameAzureRM: "azuredevops"
+
     - task: TerraformTask@5
       inputs:
         provider: 'azurerm'
