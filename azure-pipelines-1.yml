@@ -23,8 +23,11 @@ stages:
     - script: terraform -version
       displayName: "Check Terraform Version"
 
-    - script: terraform init
-      displayName: "Terraform Initialising"
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: 'azuredevops'
 
     - task: TerraformTask@5
       inputs:
