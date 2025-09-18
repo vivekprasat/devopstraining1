@@ -21,6 +21,9 @@ stages:
   - job: TerraformJob
     displayName: "Run Terraform Init"
     steps:
+    - script: sudo apt-get update && sudo apt-get install -y unzip
+      displayName: "Install unzip"
+
     - task: TerraformInstaller@1
       inputs:
         terraformVersion: 'latest'
