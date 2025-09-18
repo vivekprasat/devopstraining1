@@ -1,0 +1,51 @@
+trigger:
+- main
+
+resources:
+  repositories:
+    - repository: self
+      type: github
+      name: vivekprasat/devopstraining1
+      ref: refs/heads/main
+
+pool:
+  vmImage: ubuntu-latest
+  name: Default   # self-hosted agent pool
+  demands:
+    - agent.name -equals vivek
+
+stages:
+- stage: InitAndPlan
+  displayName: "Terraform Init"
+  jobs:
+  - job: TerraformJob
+    displayName: "Run Terraform Init"
+    steps:
+    - task: TerraformInstaller@1
+      inputs:
+        terraformVersion: 'latest'
+
+    - script: terraform -version
+      displayName: "Check Terraform Version"
+
+    - script: terraform init
+      displayName: "Terraform Initialising"
+
+    - task: ManualIntervention@8
+      inputs:
+        instructions: 'Please review the Terraform plan before continuing.'
+        emailRecipients: 'vsrajan2k@gmail.com'
+        stages:
+- stage: plan and apply
+  displayName: "Terraform plan apply"
+  jobs:
+  - job: TerraformJob
+    displayName: "Run Terraform plan terraform apply"
+    steps:
+    -
+
+    - script: terraform plan
+      displayName: "run planning"
+
+    - script: terraform apply --auto-approve
+      displayName: "Terraform plan"
