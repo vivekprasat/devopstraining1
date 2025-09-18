@@ -10,7 +10,7 @@ resources:
 
 pool:
   vmImage: ubuntu-latest
-  name: Default   # self-hosted agent pool
+  name: Default
   demands:
     - agent.name -equals vivek
 
@@ -31,21 +31,16 @@ stages:
     - script: terraform init
       displayName: "Terraform Initialising"
 
-    - task: ManualIntervention@8
-      inputs:
-        instructions: 'Please review the Terraform plan before continuing.'
-        emailRecipients: 'vsrajan2k@gmail.com'
-        stages:
-- stage: plan and apply
-  displayName: "Terraform plan apply"
+
+- stage: PlanAndApply
+  displayName: "Terraform Plan and Apply"
+  dependsOn: InitAndPlan
   jobs:
   - job: TerraformJob
-    displayName: "Run Terraform plan terraform apply"
+    displayName: "Run Terraform Plan & Apply"
     steps:
-    -
-
     - script: terraform plan
-      displayName: "run planning"
+      displayName: "Run Terraform Plan"
 
     - script: terraform apply --auto-approve
-      displayName: "Terraform plan"
+      displayName: "Run Terraform Apply"
