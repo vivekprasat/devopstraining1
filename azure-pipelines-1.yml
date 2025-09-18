@@ -54,5 +54,11 @@ stages:
   - job: ApplyTerraform
     displayName: "Apply Terraform Changes"
     steps:
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        environmentServiceNameAzureRM: 'azuredevops'
+
     - script: terraform apply --auto-approve
       displayName: "Terraform Apply"
