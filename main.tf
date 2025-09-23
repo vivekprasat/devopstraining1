@@ -25,8 +25,11 @@ module "azurerm_subnet" {
 module "azurerm_network_security_group" {
   source              = "./modules/NSG"
   name                = var.nsg_name
-  resource_group_name = module.azurerm_resource_group.name
-  location            = module.azurerm_resource_group.location
+  resource_group_name = module.azurerm_resource_group.resource_group_name
+  location            = module.azurerm_resource_group.resource_group_location
+  nic_name            = var.nic_name   # ✅ added this line
+  depends_on          = [module.azurerm_resource_group]
+}
 
   security_rules = [
     {
