@@ -48,6 +48,7 @@ module "azurerm_network_security_group" {
 module "azurerm_public_ip" {
   source              = "./modules/PublicIPaddress"
   resource_group_name = module.azurerm_resource_group.name
+  name = "net124"
   location            = module.azurerm_resource_group.location
   public_ip_name      = "net124"          # match module variable name
   sku                 = "Basic"           # optional if module default exists
