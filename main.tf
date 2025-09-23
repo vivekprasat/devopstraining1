@@ -5,12 +5,12 @@ module "azurerm_resource_group" {
 }
 
 module "azurerm_virtual_network" {
-  source         = "./modules/virtual _networks" # fixed path
-  resource_group = module.azurerm_resource_group.name
-  location       = module.azurerm_resource_group.location
-  vnet_name      = var.vnet_name
-  address_prefix = var.address_prefix
-  depends_on     = [module.azurerm_resource_group]
+  source              = "./modules/virtual _networks" # also remove the space in the folder name
+  resource_group_name = module.azurerm_resource_group.name
+  location            = module.azurerm_resource_group.location
+  vnet_name           = var.vnet_name
+  address_prefix      = var.address_prefix
+  depends_on          = [module.azurerm_resource_group]
 }
 
 module "azurerm_subnet" {
