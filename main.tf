@@ -5,7 +5,7 @@ module "azurerm_resource_group" {
 }
 
 module "azurerm_virtual_network" {
-  source              = "./modules/virtual _networks" # also remove the space in the folder name
+  source              = "./modules/virtual_networks" # fixed folder name
   resource_group_name = module.azurerm_resource_group.resource_group_name
   location            = module.azurerm_resource_group.resource_group_location
   vnet_name           = var.vnet_name
@@ -27,58 +27,43 @@ module "azurerm_network_security_group" {
   name                = var.nsg_name
   resource_group_name = module.azurerm_resource_group.resource_group_name
   location            = module.azurerm_resource_group.resource_group_location
-  nic_name            = var.nic_name   # ✅ added this line
+  nic_name            = var.nic_name
   depends_on          = [module.azurerm_resource_group]
 }
 
-  security_rules = [
-    {
-      name                       = "AllowSSH"
-      priority                   = 1001
-      direction                  = "Inbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range           = "*"
-      destination_port_range      = "22"
-      source_address_prefix       = "*"
-      destination_address_prefix  = "*"
-    }
-  ]
-
 module "azurerm_public_ip" {
   source              = "./modules/PublicIPaddress"
-  resource_group_name = module.azurerm_resource_group.name
-  name = "net124"
-  location            = module.azurerm_resource_group.location
-  public_ip_name      = "net124"          # match module variable name
-  sku                 = "Basic"           # optional if module default exists
-  allocation_method   = "Dynamic"         # optional if module default exists
+  resource_group_name = module.azurerm_resource_group.resource_group_name
+  location            = module.azurerm_resource_group.resource_group_location
+  public_ip_name      = "net124"
+  sku                 = "Basic"
+  allocation_method   = "Dynamic"
   depends_on          = [module.azurerm_resource_group]
 }
 
 module "azurerm_network_interface" {
   source              = "./modules/virtualMachines1/NIC"
   nic_name            = var.nic_name
-  resource_group_name = module.azurerm_resource_group.name
+  resource_group_name = module.azurerm_resource_group.resource_group_name
   subnet_id           = module.azurerm_subnet.subnet_id
-  location            = module.azurerm_resource_group.location
+  location            = module.azurerm_resource_group.resource_group_location
   public_ip_id        = module.azurerm_public_ip.id
-  nsg_id               = module.azurerm_network_security_group.nsg_id
+  nsg_id              = module.azurerm_network_security_group.nsg_id
   depends_on          = [module.azurerm_subnet, module.azurerm_network_security_group]
 }
 
 module "virtualmachines" {
   source              = "./modules/virtualMachines1"
   vm_name             = var.vm_name
-  location            = module.azurerm_resource_group.location
-  resource_group_name = module.azurerm_resource_group.name
+  location            = module.azurerm_resource_group.resource_group_location
+  resource_group_name = module.azurerm_resource_group.resource_group_name
   subnet_id           = module.azurerm_subnet.subnet_id
   public_ip_id        = module.azurerm_public_ip.id
   admin_username      = "azureuser"
   admin_password      = "Revisu!123"
-  nic_name             = module.azurerm_network_interface.nic_name
-  nic_id               = module.azurerm_network_interface.nic_id
-  nsg_id                = module.azurerm_network_security_group.nsg_id
+  nic_name            = module.azurerm_network_interface.nic_name
+  nic_id              = module.azurerm_network_interface.nic_id
+  nsg_id              = module.azurerm_network_security_group.nsg_id
   depends_on          = [module.azurerm_network_interface]
 }
 
