@@ -13,3 +13,13 @@ variable "location" {
 variable "name" {
   
 }
+
+variable "sku" {
+  type    = string
+  default = "Basic"
+}
+
+variable "allocation_method" {
+  type    = string
+  default = "Dynamic"
+}
