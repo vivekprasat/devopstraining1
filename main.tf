@@ -5,7 +5,7 @@ module "azurerm_resource_group" {
 }
 
 module "azurerm_virtual_network" {
-  source = "./modules/virtual_networks" # fixed folder name
+  source = "./modules/virtual _networks" # fixed folder name
   resource_group_name = module.azurerm_resource_group.resource_group_name
   location            = module.azurerm_resource_group.resource_group_location
   vnet_name           = var.vnet_name
