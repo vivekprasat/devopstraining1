@@ -27,7 +27,22 @@ module "azurerm_network_security_group" {
   name                = var.nsg_name
   resource_group_name = module.azurerm_resource_group.name
   location            = module.azurerm_resource_group.location
-  depends_on          = [module.azurerm_resource_group]
+
+  security_rules = [
+    {
+      name                       = "AllowSSH"
+      priority                   = 1001
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range           = "*"
+      destination_port_range      = "22"
+      source_address_prefix       = "*"
+      destination_address_prefix  = "*"
+    }
+  ]
+
+  depends_on = [module.azurerm_resource_group]
 }
 
 module "azurerm_public_ip" {
