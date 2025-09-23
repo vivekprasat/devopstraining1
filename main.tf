@@ -45,9 +45,6 @@ module "azurerm_network_security_group" {
     }
   ]
 
-  depends_on = [module.azurerm_resource_group]
-}
-
 module "azurerm_public_ip" {
   source              = "./modules/PublicIPaddress"
   resource_group_name = module.azurerm_resource_group.name
