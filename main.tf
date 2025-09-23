@@ -34,7 +34,9 @@ module "azurerm_public_ip" {
   source              = "./modules/PublicIPaddress"
   resource_group_name = module.azurerm_resource_group.name
   location            = module.azurerm_resource_group.location
-  name                = "net124"
+  public_ip_name      = "net124"          # match module variable name
+  sku                 = "Basic"           # optional if module default exists
+  allocation_method   = "Dynamic"         # optional if module default exists
   depends_on          = [module.azurerm_resource_group]
 }
 
