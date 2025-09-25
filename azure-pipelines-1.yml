@@ -53,5 +53,10 @@ stages:
         command: 'apply'
         environmentServiceNameAzureRM: 'azuredevops'
 
-    - script: terraform apply --auto-approve
+    - script: terraform init
       displayName: "Terraform Apply"
+    - script: terraform plan
+      displayName: "terraform plan"
+    - script: terraform apply --auto-approve
+      displayName: "applying the changes"
+
