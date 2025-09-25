@@ -40,33 +40,42 @@ stages:
 
 
 
-- stage: Apply
+- stage: deploy
   displayName: "Terraform Apply"
+  dependsOn: Terraform
+  #condition: suceeded()
   jobs:
-    - job: terraforminit
-      displayName: "apply job"
-      steps:
-      - task: TerraformTask@5
-        inputs:
-         provider: 'azurerm'
-         command: 'init'
-         backendServiceArm: 'azuredevops'
-         backendAzureRmResourceGroupName: 'vivek007'
-         backendAzureRmStorageAccountName: 'tfstorage000009'
-         backendAzureRmContainerName: 'tfprivatecontainer'
-         backendAzureRmKey: 'terraform.tfstate'
-         displayName: "inittask"
+   - deployment: deployterraformresources
+     displayName: "deploying terraform resources"
+     environment: dev123
+     pool:
+      name: Default
+     strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: TerraformTask@5
+              inputs:
+               provider: 'azurerm'
+               command: 'init'
+               backendServiceArm: 'azuredevops'
+               backendAzureRmResourceGroupName: 'vivek007'
+               backendAzureRmStorageAccountName: 'tfstorage000009'
+               backendAzureRmContainerName: 'tfprivatecontainer'
+               backendAzureRmKey: 'terraform.tfstate'
+              displayName: "inittask"
 
-      - task: TerraformTask@5
-        inputs:
-          provider: 'azurerm'
-          command: 'plan'
-          environmentServiceNameAzureRM: 'azuredevops'
-          
+            - task: TerraformTask@5
+              inputs:
+                  provider: 'azurerm'
+                  command: 'plan'
+                  environmentServiceNameAzureRM: 'azuredevops'
+
+            - task: TerraformTask@5
+              inputs:
+                provider: 'azurerm'
+                command: 'apply'
+                environmentServiceNameAzureRM: 'azuredevops'
     
     
-      - task: TerraformTask@5
-        inputs:
-          provider: 'azurerm'
-          command: 'apply'
-          environmentServiceNameAzureRM: 'azuredevops'
+     
