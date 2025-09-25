@@ -37,7 +37,7 @@ module "azurerm_public_ip" {
   location            = var.location
   public_ip_name     = "net124"
   sku                 = "Standard"
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
   depends_on          = [module.azurerm_resource_group]
 }
 
