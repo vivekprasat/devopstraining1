@@ -38,24 +38,11 @@ stages:
         command: 'plan'
         environmentServiceNameAzureRM: "azuredevops"
 
-- stage: Approval
-  displayName: "Manual Approval"
-  dependsOn: Terraform
-  jobs:
-  - job: WaitForApproval
-    displayName: "Wait for Manual Approval"
-    pool: server
-    steps:
-    - task: ManualValidation@0
-      inputs:
-        notifyUsers: 'vsrajan2k@gmail.com'
-        instructions: 'Please validate the Terraform plan and approve to proceed.'
-        onTimeout: 'reject'
-        timeoutInMinutes: 1440
+
 
 - stage: Apply
   displayName: "Terraform Apply"
-  dependsOn: Approval
+  dependsOn: terraform
   jobs:
   - job: ApplyTerraform
     displayName: "Apply Terraform Changes"
