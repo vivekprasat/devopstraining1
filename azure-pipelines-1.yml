@@ -67,7 +67,8 @@ stages:
     
       - task: TerraformTask@5
         inputs:
-              provider: 'azurerm'
-              command: 'custom'
-              outputTo: 'console'
-              customCommand: 'terraform apply --auto-approve'
+          provider: 'azurerm'
+          command: 'custom'
+          outputTo: 'console'
+          customCommand: 'terraform apply --auto-approve'
+          environmentServiceNameAzureRM: 'azuredevops'
