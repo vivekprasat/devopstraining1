@@ -1,5 +1,5 @@
 group_name     = "vivek008"
-location       = "eastus"
+location       = "westus"
 nic_name       = "vivenc-01"
 Machine_name   = "new"
 vnet_name      = "vnet01"
