@@ -19,7 +19,7 @@ variable "Machine_name" {
   type = string
 
 }
-variable "public_ip" {
+variable "public_ip_name" {
   type        = string
   description = "The name of the public IP address resource"
 }
