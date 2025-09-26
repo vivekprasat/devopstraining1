@@ -4,10 +4,14 @@ pool:
   name: Default
   demands:
     - agent.name -equals vivek
+
 parameters:
   - name: process
     type: string
-    default:
+    default: apply
+    values:
+      - apply
+      - destroy
 
 stages:
 - stage: Terraform
@@ -42,15 +46,13 @@ stages:
         command: 'plan'
         environmentServiceNameAzureRM: "azuredevops"
 
-
-
-- stage: deploy
+- stage: Deploy
   displayName: "Terraform Apply"
   dependsOn: Terraform
-  #condition: suceeded()
+  condition: succeeded()
   jobs:
-   - deployment: deployterraformresources
-     displayName: "deploying terraform resources"
+   - deployment: DeployTerraformResources
+     displayName: "Deploying Terraform Resources"
      environment: dev123
      pool:
       name: Default
@@ -58,30 +60,36 @@ stages:
       runOnce:
         deploy:
           steps:
+          - task: TerraformTask@5
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              backendServiceArm: 'azuredevops'
+              backendAzureRmResourceGroupName: 'vivek007'
+              backendAzureRmStorageAccountName: 'tfstorage000009'
+              backendAzureRmContainerName: 'tfprivatecontainer'
+              backendAzureRmKey: 'terraform.tfstate'
+            displayName: "Init Task"
+
+          - task: TerraformTask@5
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              environmentServiceNameAzureRM: 'azuredevops'
+            displayName: "Terraform Plan"
+
+          - ${{ if eq(parameters.process, 'apply') }}:
             - task: TerraformTask@5
               inputs:
-               provider: 'azurerm'
-               command: 'init'
-               backendServiceArm: 'azuredevops'
-               backendAzureRmResourceGroupName: 'vivek007'
-               backendAzureRmStorageAccountName: 'tfstorage000009'
-               backendAzureRmContainerName: 'tfprivatecontainer'
-               backendAzureRmKey: 'terraform.tfstate'
-              displayName: "inittask"
+                provider: 'azurerm'
+                command: 'apply'
+                environmentServiceNameAzureRM: 'azuredevops'
+              displayName: "Terraform Apply"
 
+          - ${{ if eq(parameters.process, 'destroy') }}:
             - task: TerraformTask@5
               inputs:
-                  provider: 'azurerm'
-                  command: 'plan'
-                  environmentServiceNameAzureRM: 'azuredevops'
-
-            - ${{if eq(parameters.process,'apply')}}:
-               - task: TerraformTask@5
-                 inputs:
-                  provider: 'azurerm'
-                  command: 'apply'
-                  environmentServiceNameAzureRM: 'azuredevops'
-
-    
-    
-     
+                provider: 'azurerm'
+                command: 'destroy'
+                environmentServiceNameAzureRM: 'azuredevops'
+              displayName: "Terraform Destroy"
