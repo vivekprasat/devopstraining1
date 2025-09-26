@@ -4,6 +4,10 @@ pool:
   name: Default
   demands:
     - agent.name -equals vivek
+parameters:
+  - name: process
+    type: string
+    default:
 
 stages:
 - stage: Terraform
@@ -71,11 +75,13 @@ stages:
                   command: 'plan'
                   environmentServiceNameAzureRM: 'azuredevops'
 
-            - task: TerraformTask@5
-              inputs:
-                provider: 'azurerm'
-                command: 'apply'
-                environmentServiceNameAzureRM: 'azuredevops'
+            - ${{if eq(parameters.process,'apply')}}:
+               - task: TerraformTask@5
+                 inputs:
+                  provider: 'azurerm'
+                  command: 'apply'
+                  environmentServiceNameAzureRM: 'azuredevops'
+
     
     
      
